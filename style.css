@@ -81,13 +81,20 @@ body {
     border-radius: 4px;
     margin: 3px; /* Space around each tile */
     display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.9em;
+    justify-content: center; /* This will center the whole text block */
+    align-items: center;    /* This will vertically center the text block */
+    font-size: 0.9em; /* You might need to adjust this with a monospaced font */
     font-weight: bold;
     cursor: grab; /* Indicates draggable */
     user-select: none; /* Prevent text selection during drag */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    box-sizing: border-box;
+
+    /* --- ADD THESE LINES --- */
+    white-space: pre; /* This is key: it preserves spaces and newlines */
+    font-family: 'Courier New', Courier, monospace; /* Use a monospaced font */
+    /* text-align: left; /* Optional: if you want text to start from left within its preserved-space block */
+                        /* If using this, you might adjust justify-content above if needed, but
+                           centering the pre-formatted block often works well. */
 }
 
 .tile.dragging { /* Style for tile when it's being dragged */
