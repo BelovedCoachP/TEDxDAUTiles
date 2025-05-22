@@ -13,15 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Game Configuration & Data ---
     const tileTexts = [
         // Row 1 from your image/list
-        "ey ", "our", "are", "of ", "cal", "and", "djo", "o a ",
+        "e y  ", "o u r", "a r e", "o f  ", "c a l", "a n d", "d j o", "o   a ",
         // Row 2
-        "h a", "urn", "ork", "g Cz", "is ", "fle", "on ", " re",
+        "h   a", "u r n", "o r k", "g   C", "I s  ", "f l e", "o n  ", "  r e",
         // Row 3
-        "l t", "bot", "ge ", "han", "vin", " sh", "isi", "for",
+        "l  t", "b o t", "g e  ", "h a n", "v I n", "  s h", "I s i", "f o r",
         // Row 4
-        "on ", "for", "tio", "ce. ", "cti", "cqu", "e A", " a ",
+        "o n  ", "f o r", "t I o", "c e.  ", "c t i", "c q u", "e   A", "   a  ",
         // Row 5
-        "Dri", "cti", " th", "n w"
+        "D r i", "c t i", "   t h", "n   w"
     ];
 
     // Create an array of tile objects, each with a unique ID and its text
