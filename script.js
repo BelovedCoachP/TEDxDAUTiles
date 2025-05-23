@@ -15,11 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Row 1 from your image/list
         "e y  ", "o u r", "a r e", "o f  ", "c a l", "a n d", "d j o", "o   a ",
         // Row 2
-        "h   a", "u r n", "o r k", "g   C", "I s  ", "f l e", "o n  ", "  r e",
+        "h   a", "u r n", "o r k", "g   C", "i s  ", "f l e", "o n  ", "  r e",
         // Row 3
-        "l  t", "b o t", "g e  ", "h a n", "v I n", "  s h", "I s i", "f o r",
+        "l  t", "b o t", "g e  ", "h a n", "v i n", "  s h", "i s i", "f o r",
         // Row 4
-        "o n  ", "f o r", "t I o", "c e.  ", "c t i", "c q u", "e   A", "   a  ",
+        "o n  ", "f o r", "t i o", "c e.  ", "c t i", "c q u", "e   A", "   a  ",
         // Row 5
         "D r i", "c t i", "   t h", "n   w"
     ];
