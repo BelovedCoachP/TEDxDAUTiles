@@ -1,18 +1,18 @@
-// script.js
+// script.js (Updated Sections)
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- DOM Element References ---
+    // --- DOM Element References --- ( zůstává stejné )
     const tileBankArea = document.getElementById('tile-bank-area');
     const gridArea = document.getElementById('grid-area');
     const hintButton = document.getElementById('hint-button');
     const resetButton = document.getElementById('reset-button');
     const winPopup = document.getElementById('win-popup');
     const closePopupButton = document.getElementById('close-popup-button');
-    // Instructions element can be targeted if hints need to write there, but alert is simpler for now.
 
     // --- Game Configuration & Data ---
+    // UPDATED TILE TEXTS (36 tiles)
     const tileTexts = [
-        // Row 1 from your image/list
+        // Row 1
         "e y  ", "o u r", "a r e", "o f  ", "c a l", "a n d", "d j o", "o   a ",
         // Row 2
         "h   a", "u r n", "o r k", "g   C", "i s  ", "f l e", "o n  ", "  r e",
@@ -24,60 +24,57 @@ document.addEventListener('DOMContentLoaded', () => {
         "D r i", "c t i", "   t h", "n   w"
     ];
 
-    // Create an array of tile objects, each with a unique ID and its text
     const tilesData = tileTexts.map((text, index) => ({
-        id: `tile-${index}`,
+        id: `tile-${index}`, // IDs will be tile-0 to tile-35
         text: text
     }));
 
-    // This is the order the tiles will appear in the Tile Bank initially (jumbled).
-    // For this example, we'll shuffle the tilesData to create a jumbled order.
-    // A more deterministic jumble might be preferred for consistent testing.
-    let initialTileBankLayout = shuffleArray([...tilesData]); // Keep original tilesData for solution mapping
+    let initialTileBankLayout = shuffleArray([...tilesData]);
 
     // --- CRITICAL: Define the correct order of tile IDs for the solution ---
-    // This array must contain the tile IDs (e.g., "tile-0", "tile-1", ...)
+    // This array must contain the 36 tile IDs (e.g., "tile-0" to "tile-35")
     // in the exact sequence that forms the target sentence.
-    // YOU MUST REPLACE THIS WITH THE ACTUAL CORRECT SEQUENCE OF YOUR 35 TILE IDs.
-    // Example: If tilesData[0] ("ey ") is the 5th word, its ID "tile-0" would be at index 4 here.
-    // For demonstration, let's assume a simple (but incorrect for your sentence) sequential order.
-    // Replace this with the actual solution order based on your specific tile texts and sentence.
-    const correctGridSolutionOrder = tilesData.map(tile => tile.id);
-    // Example: If the solution is tile-5, then tile-0, then tile-12, etc.
-    // const correctGridSolutionOrder = ["tile-5", "tile-0", "tile-12", ... ];
+    // YOU MUST REPLACE THIS WITH THE ACTUAL CORRECT SEQUENCE.
+    // The placeholder below will NOT solve the puzzle.
+    const correctGridSolutionOrder = tilesData.map(tile => tile.id); // Placeholder!
+    // Example: correctGridSolutionOrder = ["tile-32", "tile-20", "tile-12", ...etc. for all 36 tiles ];
 
-    const GRID_ROWS_CONFIG = [8, 8, 8, 8, 3]; // Number of cells per row in the grid & tile bank
+    // UPDATED GRID CONFIGURATION
+    const GRID_ROWS_CONFIG = [8, 8, 8, 8, 4]; // Total 36 cells
 
-    let draggedTile = null; // To store the tile being dragged
+    let draggedTile = null;
 
-    // --- Utility Functions ---
+    // --- Utility Functions --- (shuffleArray - zůstává stejné)
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
     }
 
-    // --- Tile Bank and Grid Rendering ---
+    // --- Tile Bank and Grid Rendering --- (Logic remains the same, uses new GRID_ROWS_CONFIG and 36 tiles)
     function renderTileBank() {
-        tileBankArea.innerHTML = ''; // Clear previous tiles
+        tileBankArea.innerHTML = '';
         let tileIndex = 0;
-        GRID_ROWS_CONFIG.forEach(numTilesInRow => {
+        GRID_ROWS_CONFIG.forEach((numTilesInRow, rowIndex) => { // Added rowIndex for unique row IDs if needed
             const rowDiv = document.createElement('div');
             rowDiv.className = 'tile-bank-row';
+            rowDiv.id = `bank-row-${rowIndex}`; // Assign an ID to the bank row for more specific resets if ever needed
             for (let i = 0; i < numTilesInRow; i++) {
                 if (tileIndex < initialTileBankLayout.length) {
                     const tileData = initialTileBankLayout[tileIndex++];
                     const tileElement = createTileElement(tileData);
-                    // Store initial bank position for reset
-                    tileElement.dataset.initialBankParentId = rowDiv.id || `bank-row-${tileBankArea.children.length}`;
-                    if (!rowDiv.id) rowDiv.id = tileElement.dataset.initialBankParentId;
-
+                    // Store reference to its original bank row for precise reset
+                    tileElement.dataset.initialBankRowId = rowDiv.id;
                     rowDiv.appendChild(tileElement);
-                } else { // If fewer than 35 tiles, create an empty placeholder
+                } else {
+                    // This case should ideally not be hit if GRID_ROWS_CONFIG sums to tile count
                     const emptyPlaceholder = document.createElement('div');
-                    emptyPlaceholder.className = 'tile-placeholder'; // Needs styling if used
+                    emptyPlaceholder.className = 'tile-placeholder';
+                    emptyPlaceholder.style.width = '70px'; // Match tile style
+                    emptyPlaceholder.style.height = '50px';// Match tile style
+                    emptyPlaceholder.style.margin = '3px'; // Match tile style
                     rowDiv.appendChild(emptyPlaceholder);
                 }
             }
@@ -85,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function createTileElement(tileData) {
+    function createTileElement(tileData) { // (zůstává stejné)
         const tileElement = document.createElement('div');
         tileElement.id = tileData.id;
         tileElement.className = 'tile';
@@ -97,16 +94,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return tileElement;
     }
 
-    function renderGrid() {
-        gridArea.innerHTML = ''; // Clear previous grid
+    function renderGrid() { // (Logic remains the same, uses new GRID_ROWS_CONFIG for 36 cells)
+        gridArea.innerHTML = '';
         let cellIndex = 0;
-        GRID_ROWS_CONFIG.forEach((numCellsInRow, rowIndex) => {
+        GRID_ROWS_CONFIG.forEach(numCellsInRow => {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'grid-row';
             for (let i = 0; i < numCellsInRow; i++) {
                 const cellElement = document.createElement('div');
                 cellElement.className = 'grid-cell';
-                cellElement.dataset.gridPosition = cellIndex++; // 0 to 34
+                cellElement.dataset.gridPosition = cellIndex++; // 0 to 35
 
                 cellElement.addEventListener('dragover', handleDragOver);
                 cellElement.addEventListener('dragenter', handleDragEnter);
@@ -118,20 +115,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Drag and Drop Event Handlers ---
+    // --- Drag and Drop Event Handlers --- (zůstávají stejné)
     function handleDragStart(event) {
         draggedTile = event.target;
         event.dataTransfer.setData('text/plain', event.target.id);
-        setTimeout(() => event.target.classList.add('dragging'), 0); // Visual cue
+        setTimeout(() => event.target.classList.add('dragging'), 0);
     }
 
     function handleDragEnd(event) {
-        draggedTile.classList.remove('dragging');
+        if (draggedTile) { // Check if draggedTile is not null
+            draggedTile.classList.remove('dragging');
+        }
         draggedTile = null;
     }
 
     function handleDragOver(event) {
-        event.preventDefault(); // Necessary to allow dropping
+        event.preventDefault();
     }
 
     function handleDragEnter(event) {
@@ -152,36 +151,46 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetCell = event.target.closest('.grid-cell');
         if (targetCell && draggedTile) {
             targetCell.classList.remove('drag-over');
-
-            // If the cell is empty, append the tile
             if (targetCell.children.length === 0) {
-                // If tile was in another grid cell, remove it from there
                 if (draggedTile.parentElement.classList.contains('grid-cell')) {
-                    draggedTile.parentElement.innerHTML = ''; // Make old cell empty
+                    // draggedTile.parentElement.innerHTML = ''; // Clear child instead of innerHTML
+                     while (draggedTile.parentElement.firstChild) {
+                        draggedTile.parentElement.removeChild(draggedTile.parentElement.firstChild);
+                    }
                 }
                 targetCell.appendChild(draggedTile);
             }
-            // If cell is not empty, and we want to swap or prevent drop:
-            // For now, only allows drop in empty cell. If you drag from bank to occupied, it won't drop.
-            // If you drag from grid cell to occupied grid cell, it won't drop.
-
             checkWinCondition();
         }
     }
-
+    
     // --- Game Logic Functions ---
     function handleReset() {
-        // Re-render the tile bank with initial jumbled layout
-        // This involves clearing the grid and putting all tiles back.
-        // Simplest way is to re-initialize parts of the game.
-        initialTileBankLayout = shuffleArray([...tilesData]); // Get a new jumble or reset to a fixed initial jumble
-        renderTileBank();
-        renderGrid(); // Clears grid cells
+        // To ensure tiles go back to their *original* bank spots, we need a more robust reset.
+        // The simplest way to ensure the original jumbled layout is to re-render it.
+        // If initialTileBankLayout is shuffled once at the start, keep that shuffled order.
+        // Or, re-shuffle if you want a new jumble on each reset. Let's stick to resetting to the initial jumble.
+
+        // Clear the grid first
+        const gridCells = gridArea.querySelectorAll('.grid-cell');
+        gridCells.forEach(cell => {
+            // cell.innerHTML = '';
+            while (cell.firstChild) {
+                cell.removeChild(cell.firstChild);
+            }
+        });
+
+        // Re-render the tile bank with the exact same initialTileBankLayout
+        // This requires initialTileBankLayout to be the fixed jumbled order for the session.
+        // The createTileElement is fine, renderTileBank should just use the fixed initialTileBankLayout.
+        renderTileBank(); // This will recreate tiles based on initialTileBankLayout
+        
         hideWinPopup();
     }
-
-    function handleHint() {
-        // Option B: Pick a tile still in the bank and tell where it goes.
+    
+    // Hint function might need slight adjustment if tile IDs change due to reordering tileTexts.
+    // But core logic of finding a tile in bank and its correct spot remains.
+    function handleHint() { // (zůstává stejné v logice, ale bude pracovat s 36 dlaždicemi)
         const tilesInBank = Array.from(tileBankArea.querySelectorAll('.tile'));
         if (tilesInBank.length === 0) {
             alert("No tiles left in the bank to give a hint for!");
@@ -189,32 +198,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let hintGiven = false;
-        for (const tileInBank of tilesInBank) {
+        // Create a copy of tilesInBank and shuffle it to provide a random hint
+        const shuffledBankTiles = shuffleArray([...tilesInBank]);
+
+        for (const tileInBank of shuffledBankTiles) {
             const tileId = tileInBank.id;
             const correctPositionIndex = correctGridSolutionOrder.indexOf(tileId);
 
             if (correctPositionIndex !== -1) {
                 const targetGridCell = gridArea.querySelector(`.grid-cell[data-grid-position='${correctPositionIndex}']`);
-                // Check if the correct cell is empty OR contains the wrong tile
-                if (!targetGridCell.hasChildNodes() || (targetGridCell.firstChild && targetGridCell.firstChild.id !== tileId)) {
-                    const rowIndex = Math.floor(correctPositionIndex / GRID_ROWS_CONFIG[0]) + 1; // Approximate row
-                    const colIndex = (correctPositionIndex % GRID_ROWS_CONFIG[0]) + 1; // Approximate col
-                    alert(`Hint: The tile '${tileInBank.textContent}' belongs in grid position approximately Row ${rowIndex}, Column ${colIndex} (Slot ${correctPositionIndex + 1}).`);
+                if (targetGridCell && (!targetGridCell.hasChildNodes() || (targetGridCell.firstChild && targetGridCell.firstChild.id !== tileId))) {
+                    // Determine row and column more accurately based on GRID_ROWS_CONFIG
+                    let cumulativeCells = 0;
+                    let hintRowIndex = -1, hintColIndex = -1;
+                    for(let r=0; r < GRID_ROWS_CONFIG.length; r++) {
+                        const cellsInThisRow = GRID_ROWS_CONFIG[r];
+                        if(correctPositionIndex < cumulativeCells + cellsInThisRow) {
+                            hintRowIndex = r + 1;
+                            hintColIndex = (correctPositionIndex - cumulativeCells) + 1;
+                            break;
+                        }
+                        cumulativeCells += cellsInThisRow;
+                    }
+                    alert(`Hint: The tile '${tileInBank.textContent}' goes into Row ${hintRowIndex}, Column ${hintColIndex} (Overall Slot ${correctPositionIndex + 1}).`);
                     hintGiven = true;
-                    break;
+                    break; 
                 }
             }
         }
-        if (!hintGiven && tilesInBank.length > 0) {
-            alert("All remaining tiles in the bank are either already correctly placed (somehow) or a hint isn't available for them right now. Try arranging some tiles!");
-        } else if (!hintGiven && tilesInBank.length === 0){
-            alert("All tiles placed! Check your solution or reset.");
+        if (!hintGiven) {
+            if (tilesInBank.length > 0) {
+                 alert("All remaining tiles in the bank appear to be for already correctly filled spots, or no simple hint is available. Keep trying!");
+            } else {
+                 alert("All tiles placed! If the puzzle isn't solved, some may be in the wrong order.");
+            }
         }
     }
 
-
-    function checkWinCondition() {
+    function checkWinCondition() { // (Bude kontrolovat 36 dlaždic)
         const gridCells = gridArea.querySelectorAll('.grid-cell');
+        if (gridCells.length !== correctGridSolutionOrder.length) return; // Should not happen if rendered correctly
+
         let allCorrect = true;
         for (let i = 0; i < correctGridSolutionOrder.length; i++) {
             const cell = gridCells[i];
@@ -230,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Popup Functions ---
+    // --- Popup Functions --- (zůstávají stejné)
     function showWinPopup() {
         winPopup.classList.add('visible');
         winPopup.setAttribute('aria-hidden', 'false');
@@ -243,6 +267,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Initialization ---
     function initGame() {
+        // Ensure initialTileBankLayout is set once for the session for consistent reset
+        initialTileBankLayout = shuffleArray([...tilesData]); // Set the jumbled order for this game session
+
         renderTileBank();
         renderGrid();
         resetButton.addEventListener('click', handleReset);
@@ -250,5 +277,5 @@ document.addEventListener('DOMContentLoaded', () => {
         closePopupButton.addEventListener('click', hideWinPopup);
     }
 
-    initGame(); // Start the game
+    initGame();
 });
