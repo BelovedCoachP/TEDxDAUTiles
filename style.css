@@ -195,7 +195,20 @@ body {
     margin-bottom: 25px;
     color: #f0f0f0;
 }
+/* --- ADD THESE NEW OPTIONAL STYLES HERE --- */
+.popup-content .solved-sentence {
+    font-size: 1.1em; /* Slightly smaller */
+    font-style: italic;
+    margin-bottom: 15px; /* Adjusted margin */
+    color: #e0e0e0;
+}
 
+.popup-content .event-thankyou {
+    font-size: 1.2em; /* Or keep as is if the generic .popup-content p is fine */
+    margin-bottom: 25px; /* Or adjust as needed */
+    /* color: #f0f0f0; */ /* Already covered by .popup-content p if not overridden */
+}
+/* --- END OF NEW OPTIONAL STYLES --- */
 .popup-content .game-button { /* Style the close button like other game buttons */
     background-color: #6c757d; /* Grey */
 }
