@@ -1,4 +1,4 @@
-// script.js (Complete version with Auto-Populate and Confetti)
+// script.js (Final version based on user's definitive solution map)
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Element References ---
@@ -11,52 +11,78 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Game Configuration & Data ---
     const tileTexts = [
-        // Row 1 (indices 0-7)
-        "e y  ", "o u r", "a r e", "o f  ", "c a l", "a n d", "d j o", "o   a ",
-        // Row 2 (indices 8-15)
-        "h   a", "u r n", "o r k", "g   C", "i s  ", "f l e", "o n  ", "  r e",
-        // Row 3 (indices 16-23)
-        "l  t", "b o t", "g e  ", "h a n", "v i n", "  s h", "i s i", "f o r", // tileTexts[23] is "f o r"
-        // Row 4 (indices 24-31)
-        "o n  ", "f o r", "t i o", "c e.  ", "c t i", "c q u", "e   A", "   a  ",
-        // Row 5 (indices 32-35)
-        "D r i", "c t i", "   t h", "n   w"
+        /*0*/ "e y  ", /*1*/ "o u r", /*2*/ "a r e", /*3*/ "o f  ", /*4*/ "c a l", /*5*/ "a n d", /*6*/ "d j o", /*7*/ "o   a ",
+        /*8*/ "h   a", /*9*/ "u r n",/*10*/ "o r k",/*11*/ "g   C",/*12*/ "i s  ",/*13*/ "f l e",/*14*/ "o n  ",/*15*/ "  r e",
+        /*16*/"l  t", /*17*/ "b o t",/*18*/ "g e  ",/*19*/ "h a n",/*20*/ "v i n",/*21*/ "  s h",/*22*/ "i s i",/*23*/ "f o r",
+        /*24*/"o n  ", /*25*/ "f o r",/*26*/ "t i o",/*27*/ "c e.  ",/*28*/ "c t i",/*29*/ "c q u",/*30*/ "e   A",/*31*/ "   a  ",
+        /*32*/"D r i", /*33*/ "c t i",/*34*/ "   t h",/*35*/ "n   w"
     ];
 
     const tilesData = tileTexts.map((text, index) => ({
-        id: `tile-${index}`, // IDs will be tile-0 to tile-35
+        id: `tile-${index}`,
         text: text
     }));
 
-    // --- Configuration for Auto-Placed Tile ---
-    const AUTOPLACED_TILE_ID = "tile-23"; // This is the "f o r" from Row 3, Tile 8
-    const AUTOPLACED_TILE_GRID_POSITION = 34; // Grid slot 35 (0-indexed, which is the 3rd slot in the last row)
+    // --- Configuration for Auto-Placed Tiles ---
+    const autoPlacedTilesInfo = [
+        { id: "tile-24", gridPosition: 11 }, // "o n  " (from tileTexts[24]) goes into Grid Slot 12 (index 11)
+        { id: "tile-23", gridPosition: 34 }  // "f o r" (from tileTexts[23]) goes into Grid Slot 35 (index 34)
+    ];
+    const autoPlacedTileIds = autoPlacedTilesInfo.map(info => info.id);
 
-    // initialTileBankLayout will contain the 35 draggable tiles, jumbled.
-    let initialTileBankLayout = shuffleArray(tilesData.filter(tile => tile.id !== AUTOPLACED_TILE_ID));
+    let initialTileBankLayout = shuffleArray(tilesData.filter(tile => !autoPlacedTileIds.includes(tile.id))); // 34 draggable tiles
 
-    // --- CRITICAL: Define the correct order of ALL 36 tile IDs for the solution ---
-    // This array must contain the 36 tile IDs (e.g., "tile-0" to "tile-35")
-    // in the exact sequence that forms the target sentence.
-    // AUTOPLACED_TILE_ID ("tile-23") will be part of this sequence at index AUTOPLACED_TILE_GRID_POSITION (34).
-    // YOU MUST REPLACE THIS WITH THE ACTUAL CORRECT SEQUENCE.
-    const correctGridSolutionOrder = tilesData.map(tile => tile.id); // Placeholder! Needs to be the actual solution.
-    // Example: correctGridSolutionOrder = ["tile-32", "tile-20", /*...,*/ "tile-23", /*...,*/ "tile-15" ]; // Total 36 IDs
+    // --- Definitive Correct Order of ALL 36 tile IDs for the solution ---
+    const correctGridSolutionOrder = [
+        "tile-32", // Grid Slot 1
+        "tile-20", // Grid Slot 2
+        "tile-11", // Grid Slot 3
+        "tile-19", // Grid Slot 4
+        "tile-18", // Grid Slot 5
+        "tile-12", // Grid Slot 6
+        "tile-17", // Grid Slot 7
+        "tile-8",  // Grid Slot 8
+        "tile-15", // Grid Slot 9
+        "tile-13", // Grid Slot 10
+        "tile-33", // Grid Slot 11 (Player places this)
+        "tile-24", // Grid Slot 12 (PRE-PLACED "o n  ")
+        "tile-3",  // Grid Slot 13
+        "tile-1",  // Grid Slot 14
+        "tile-21", // Grid Slot 15
+        "tile-2",  // Grid Slot 16
+        "tile-6",  // Grid Slot 17
+        "tile-9",  // Grid Slot 18
+        "tile-0",  // Grid Slot 19
+        "tile-5",  // Grid Slot 20
+        "tile-31", // Grid Slot 21
+        "tile-4",  // Grid Slot 22
+        "tile-16", // Grid Slot 23
+        "tile-7",  // Grid Slot 24
+        "tile-28", // Grid Slot 25
+        "tile-14", // Grid Slot 26 (This is the other "o n  " tile, player places)
+        "tile-25", // Grid Slot 27 (This is the other "f o r" tile, player places)
+        "tile-34", // Grid Slot 28
+        "tile-30", // Grid Slot 29
+        "tile-29", // Grid Slot 30
+        "tile-22", // Grid Slot 31
+        "tile-26", // Grid Slot 32
+        "tile-35", // Grid Slot 33
+        "tile-10", // Grid Slot 34
+        "tile-23", // Grid Slot 35 (PRE-PLACED "f o r")
+        "tile-27"  // Grid Slot 36
+    ];
 
     const GRID_ROWS_CONFIG = [8, 8, 8, 8, 4]; // Total 36 cells
+    let draggedTile = null;
 
-    let draggedTile = null; // To store the tile being dragged
-
-    // --- Utility Functions ---
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
     }
 
-    // --- Tile Creation ---
     function createTileElement(tileData, isDraggable = true) {
         const tileElement = document.createElement('div');
         tileElement.id = tileData.id;
@@ -69,56 +95,57 @@ document.addEventListener('DOMContentLoaded', () => {
             tileElement.addEventListener('dragend', handleDragEnd);
         } else {
             tileElement.style.cursor = 'default';
-            tileElement.classList.add('pre-placed-tile'); // For distinct styling
+            tileElement.classList.add('pre-placed-tile');
         }
         return tileElement;
     }
 
-    // --- Tile Bank Rendering ---
     function renderTileBank() {
         tileBankArea.innerHTML = '';
-        let tileRenderIndex = 0; // Index for accessing tiles from initialTileBankLayout (which has 35 tiles)
-        
-        // The bank visually represents places for 35 draggable tiles,
-        // matching the grid structure minus one auto-placed tile.
-        let bankSlotsRendered = 0;
-        GRID_ROWS_CONFIG.forEach((numGridSlotsInRow, rowIndex) => {
+        let tileRenderIndex = 0;
+        let bankSlotsCreated = 0;
+        const totalDraggableTiles = 34;
+
+        GRID_ROWS_CONFIG.forEach((numSlotsInGridRow, rowIndex) => {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'tile-bank-row';
             
-            let slotsInThisBankRow = numGridSlotsInRow;
-            if (rowIndex === GRID_ROWS_CONFIG.length -1) { // If it's the last row
-                // The grid has 4 slots, but bank only needs to show 3 tiles for this row.
-                slotsInThisBankRow = numGridSlotsInRow - 1; 
+            let slotsToCreateInThisBankRow = numSlotsInGridRow;
+            // For the rows containing pre-placed items, the bank row will be shorter
+            if (rowIndex === 1 && numSlotsInGridRow === 8) { // Second row (index 1) where grid slot 11 (index 10) is pre-placed
+                 const prePlacedHere = autoPlacedTilesInfo.find(info => info.gridPosition >= 8 && info.gridPosition < 16 && Math.floor((info.gridPosition)/8) === rowIndex);
+                 if(prePlacedHere) slotsToCreateInThisBankRow--;
             }
-            // For all other rows, slotsInThisBankRow is same as numGridSlotsInRow
+             if (rowIndex === 4 && numSlotsInGridRow === 4) { // Last row (index 4) where grid slot 34 (index 34) is pre-placed
+                const prePlacedHere = autoPlacedTilesInfo.find(info => info.gridPosition >= 32 && info.gridPosition < 36 && Math.floor((info.gridPosition)/8) === rowIndex);
+                if(prePlacedHere) slotsToCreateInThisBankRow--;
+            }
 
-            for (let i = 0; i < slotsInThisBankRow; i++) {
+
+            for (let i = 0; i < slotsToCreateInThisBankRow; i++) {
                 if (tileRenderIndex < initialTileBankLayout.length) {
                     const tileData = initialTileBankLayout[tileRenderIndex++];
-                    const tileElement = createTileElement(tileData); // Draggable by default
+                    const tileElement = createTileElement(tileData);
                     rowDiv.appendChild(tileElement);
-                    bankSlotsRendered++;
+                    bankSlotsCreated++;
                 } else {
-                    // This should only happen if logic to calculate slotsInThisBankRow is off
-                    // or if initialTileBankLayout is unexpectedly short.
-                    // For safety, add a placeholder, but ideally not reached.
+                    // This case should only be hit if not enough draggable tiles for the calculated bank slots
+                    // For visual consistency, an empty placeholder can be added.
                     const emptyPlaceholder = document.createElement('div');
                     emptyPlaceholder.className = 'tile-placeholder';
                     rowDiv.appendChild(emptyPlaceholder);
                 }
             }
-            if (rowDiv.hasChildNodes()) { // Only append row if it has tiles/placeholders
+            if (rowDiv.hasChildNodes()) {
                  tileBankArea.appendChild(rowDiv);
             }
         });
-         // Sanity check
-        if (bankSlotsRendered !== 35) {
-            console.warn(`Rendered ${bankSlotsRendered} slots in bank, expected 35.`);
+        if (bankSlotsCreated !== totalDraggableTiles) {
+             console.warn(`Rendered ${bankSlotsCreated} tile slots in bank, expected ${totalDraggableTiles}.`);
         }
     }
 
-    // --- Grid Rendering ---
+
     function renderGrid() {
         gridArea.innerHTML = '';
         let cellIndex = 0;
@@ -131,14 +158,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 cellElement.className = 'grid-cell';
                 cellElement.dataset.gridPosition = currentCellPosition;
 
-                if (currentCellPosition === AUTOPLACED_TILE_GRID_POSITION) {
-                    const tileData = tilesData.find(t => t.id === AUTOPLACED_TILE_ID);
+                const autoPlacedInfo = autoPlacedTilesInfo.find(info => info.gridPosition === currentCellPosition);
+                if (autoPlacedInfo) {
+                    const tileData = tilesData.find(t => t.id === autoPlacedInfo.id);
                     if (tileData) {
                         const prePlacedTile = createTileElement(tileData, false); // Not draggable
                         cellElement.appendChild(prePlacedTile);
                     }
                 } else {
-                    // Add event listeners for player-interactive cells
                     cellElement.addEventListener('dragover', handleDragOver);
                     cellElement.addEventListener('dragenter', handleDragEnter);
                     cellElement.addEventListener('dragleave', handleDragLeave);
@@ -150,37 +177,32 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Drag and Drop Event Handlers ---
     function handleDragStart(event) {
-        // Check if the target is actually a draggable tile and not something else
         if (event.target.classList.contains('tile') && event.target.draggable) {
             draggedTile = event.target;
             event.dataTransfer.setData('text/plain', event.target.id);
-            setTimeout(() => {
-                if (draggedTile) draggedTile.classList.add('dragging');
-            }, 0); // Visual cue
+            setTimeout(() => { if (draggedTile) draggedTile.classList.add('dragging'); }, 0);
         } else {
-            event.preventDefault(); // Prevent drag if not a draggable tile
+            event.preventDefault();
         }
     }
 
     function handleDragEnd(event) {
-        if (draggedTile) { // Check if draggedTile exists
+        if (draggedTile) {
             draggedTile.classList.remove('dragging');
         }
         draggedTile = null;
     }
 
     function handleDragOver(event) {
-        event.preventDefault(); // Necessary to allow dropping
+        event.preventDefault();
     }
 
     function handleDragEnter(event) {
         event.preventDefault();
         const targetCell = event.target.closest('.grid-cell');
-        // Only add drag-over class if it's not the auto-placed tile's cell AND it's empty or has a user-placed tile
-        if (targetCell && parseInt(targetCell.dataset.gridPosition) !== AUTOPLACED_TILE_GRID_POSITION) {
-             if (!targetCell.firstChild || (targetCell.firstChild && targetCell.firstChild.id !== AUTOPLACED_TILE_ID && targetCell.firstChild.draggable)) {
+        if (targetCell && !autoPlacedTilesInfo.some(info => info.gridPosition === parseInt(targetCell.dataset.gridPosition))) {
+            if (!targetCell.firstChild || (targetCell.firstChild.draggable)) { // Check if cell is empty or has a draggable tile
                 targetCell.classList.add('drag-over');
             }
         }
@@ -196,51 +218,41 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleDrop(event) {
         event.preventDefault();
         const targetCell = event.target.closest('.grid-cell');
-
         if (targetCell && draggedTile) {
             targetCell.classList.remove('drag-over');
 
-            // Prevent dropping onto the auto-placed tile's cell
-            if (parseInt(targetCell.dataset.gridPosition) === AUTOPLACED_TILE_GRID_POSITION) {
-                return; // Don't allow drop here
+            if (autoPlacedTilesInfo.some(info => info.gridPosition === parseInt(targetCell.dataset.gridPosition))) {
+                return; // Don't allow drop onto an auto-placed tile's cell
             }
 
-            // If the target cell is empty or contains another draggable tile (allowing swap/overwrite)
             if (!targetCell.firstChild || (targetCell.firstChild && targetCell.firstChild.draggable)) {
-                // If tile was in another grid cell, make that cell empty
                 if (draggedTile.parentElement.classList.contains('grid-cell')) {
                     draggedTile.parentElement.innerHTML = '';
                 }
-                // Clear target cell before appending (if it had another draggable tile)
-                targetCell.innerHTML = '';
+                targetCell.innerHTML = ''; // Clear cell before appending
                 targetCell.appendChild(draggedTile);
                 checkWinCondition();
             }
         }
     }
 
-    // --- Game Logic Functions ---
     function handleReset() {
-        // Clear player-placed tiles from the grid
         gridArea.querySelectorAll('.grid-cell').forEach(cell => {
-            if (parseInt(cell.dataset.gridPosition) !== AUTOPLACED_TILE_GRID_POSITION) {
-                while (cell.firstChild) { // Clear all children (just in case)
+            if (!autoPlacedTilesInfo.some(info => info.gridPosition === parseInt(cell.dataset.gridPosition))) {
+                while (cell.firstChild) {
                     cell.removeChild(cell.firstChild);
                 }
             }
         });
-
-        // Re-shuffle the draggable tiles for the bank (optional, or use fixed initial jumble)
-        initialTileBankLayout = shuffleArray(tilesData.filter(tile => tile.id !== AUTOPLACED_TILE_ID));
-        renderTileBank(); // Re-renders the 35 draggable tiles in the bank
-        
+        initialTileBankLayout = shuffleArray(tilesData.filter(tile => !autoPlacedTileIds.includes(tile.id)));
+        renderTileBank();
         hideWinPopup();
     }
     
     function handleHint() {
         const tilesInBank = Array.from(tileBankArea.querySelectorAll('.tile'));
         if (tilesInBank.length === 0) {
-            alert("No draggable tiles left in the bank to give a hint for!");
+            alert("No draggable tiles left to give a hint for!");
             return;
         }
 
@@ -249,14 +261,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for (const tileInBank of shuffledBankTiles) {
             const tileId = tileInBank.id;
-            // This tile is draggable, so it's not the AUTOPLACED_TILE_ID
-
             const correctPositionIndex = correctGridSolutionOrder.indexOf(tileId);
 
-            // Ensure the correct position is not the auto-placed slot
-            if (correctPositionIndex !== -1 && correctPositionIndex !== AUTOPLACED_TILE_GRID_POSITION) {
+            // Ensure the correct position is not one of the auto-placed slots
+            if (correctPositionIndex !== -1 && !autoPlacedTilesInfo.some(info => info.gridPosition === correctPositionIndex)) {
                 const targetGridCell = gridArea.querySelector(`.grid-cell[data-grid-position='${correctPositionIndex}']`);
-                // Check if this correct cell is empty OR contains the wrong tile
                 if (targetGridCell && (!targetGridCell.hasChildNodes() || (targetGridCell.firstChild && targetGridCell.firstChild.id !== tileId))) {
                     let cumulativeCells = 0;
                     let hintRowIndex = -1, hintColIndex = -1;
@@ -275,27 +284,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-        if (!hintGiven) {
+         if (!hintGiven) {
              if (tilesInBank.length > 0) {
-                 alert("Could not find a clear hint right now. Try arranging some more tiles or check existing ones!");
-            } else { // Should be caught by the initial check, but as a fallback
-                 alert("All draggable tiles placed! If the puzzle isn't solved, some may be in the wrong order.");
+                 alert("Could not find a clear hint right now. All remaining bank tiles might be for spots that are already correctly filled by other draggable tiles, or something is amiss in the solution order. Try rearranging!");
+            } else { 
+                 alert("All draggable tiles placed!");
             }
         }
     }
 
     function checkWinCondition() {
         const gridCells = gridArea.querySelectorAll('.grid-cell');
-        // Ensure we have the correct number of grid cells matching the solution order length
         if (gridCells.length !== correctGridSolutionOrder.length) {
-            console.error("Mismatch between rendered grid cells and solution length.");
+            console.error("Rendered grid cells count does not match solution length.");
             return; 
         }
 
         let allCorrect = true;
         for (let i = 0; i < correctGridSolutionOrder.length; i++) {
-            const cell = gridCells[i]; // gridCells is a NodeList, access by index
-            const tileInCell = cell.firstChild; // The tile div is the first child
+            const cell = gridCells[i];
+            const tileInCell = cell.firstChild;
             
             if (!tileInCell || tileInCell.id !== correctGridSolutionOrder[i]) {
                 allCorrect = false;
@@ -308,37 +316,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Popup Functions ---
     function showWinPopup() {
         winPopup.classList.add('visible');
         winPopup.setAttribute('aria-hidden', 'false');
-
-        // Trigger confetti!
         if (typeof confetti === 'function') {
-            const duration = 3 * 1000; // 3 seconds
+            console.log("Confetti function found! Firing confetti...");
+            const duration = 3 * 1000;
             const animationEnd = Date.now() + duration;
-            // zIndex for confetti should be higher than popup's if necessary, but popup is 1000.
-            // Let's ensure confetti itself doesn't block the popup close button visually for too long.
             const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1005 }; 
-
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
-            }
-
-            // Initial burst
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
             confetti(Object.assign({}, defaults, { particleCount: 150, spread: 100, origin: { y: 0.6 } }));
-            
             const interval = setInterval(function() {
                 const timeLeft = animationEnd - Date.now();
-
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
-
+                if (timeLeft <= 0) return clearInterval(interval);
                 const particleCount = 50 * (timeLeft / duration);
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
             }, 250);
+        } else {
+            console.error("Confetti function NOT FOUND! Ensure library is loaded.");
         }
     }
 
@@ -347,18 +343,14 @@ document.addEventListener('DOMContentLoaded', () => {
         winPopup.setAttribute('aria-hidden', 'true');
     }
 
-    // --- Initialization ---
     function initGame() {
-        // Set the initial jumbled layout for draggable tiles once for the session
-        initialTileBankLayout = shuffleArray(tilesData.filter(tile => tile.id !== AUTOPLACED_TILE_ID));
-        
-        renderGrid();     // Render grid first to place the auto-placed tile
-        renderTileBank(); // Then render the bank with the remaining 35 draggable tiles
-        
+        initialTileBankLayout = shuffleArray(tilesData.filter(tile => !autoPlacedTileIds.includes(tile.id)));
+        renderGrid();
+        renderTileBank();
         resetButton.addEventListener('click', handleReset);
         hintButton.addEventListener('click', handleHint);
         closePopupButton.addEventListener('click', hideWinPopup);
     }
 
-    initGame(); // Start the game
+    initGame();
 });
