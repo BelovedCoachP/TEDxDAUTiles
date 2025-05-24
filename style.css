@@ -265,3 +265,18 @@ body {
         padding: 10px;
     }
 }
+.pre-placed-tile {
+    opacity: 0.8; /* Make it look slightly different, e.g., a bit faded */
+    /* background-color: #f0f0f0; /* Or a slightly different background */
+    /* border: 1px solid #bbb; */ /* Or a different border to indicate it's fixed */
+    cursor: default !important; /* Ensure no grab cursor */
+}
+
+.tile-placeholder { /* For empty slots in the tile bank visual if any */
+    width: 70px;  /* Must match tile width */
+    height: 50px; /* Must match tile height */
+    margin: 3px;
+    border-radius: 4px;
+    /* background-color: rgba(255,255,255,0.05); /* Very subtle fill */
+    box-sizing: border-box;
+}
