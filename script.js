@@ -293,28 +293,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function checkWinCondition() {
-        const gridCells = gridArea.querySelectorAll('.grid-cell');
-        if (gridCells.length !== correctGridSolutionOrder.length) {
-            console.error("Rendered grid cells count does not match solution length.");
-            return; 
-        }
+   // In script.js - Modify checkWinCondition
 
-        let allCorrect = true;
-        for (let i = 0; i < correctGridSolutionOrder.length; i++) {
-            const cell = gridCells[i];
-            const tileInCell = cell.firstChild;
-            
-            if (!tileInCell || tileInCell.id !== correctGridSolutionOrder[i]) {
-                allCorrect = false;
-                break;
+function checkWinCondition() {
+    console.log("Checking win condition..."); // Log when function is called
+    const gridCells = gridArea.querySelectorAll('.grid-cell');
+    if (gridCells.length !== correctGridSolutionOrder.length) {
+        console.error("Rendered grid cells count does not match solution length. Grid cells:", gridCells.length, "Solution length:", correctGridSolutionOrder.length);
+        return;
+    }
+
+    let allCorrect = true;
+    let mismatchesFound = []; // To store details of mismatches
+
+    for (let i = 0; i < correctGridSolutionOrder.length; i++) {
+        const cell = gridCells[i];
+        const tileInCell = cell.firstChild;
+        const expectedTileId = correctGridSolutionOrder[i];
+        const actualTileId = tileInCell ? tileInCell.id : "none (empty cell)";
+
+        if (!tileInCell || tileInCell.id !== expectedTileId) {
+            allCorrect = false;
+            // Log the first few mismatches to avoid flooding the console
+            if (mismatchesFound.length < 5) {
+                mismatchesFound.push(`Slot <span class="math-inline">\{i\}\: Expected '</span>{expectedTileId}', Got '${actualTileId}'`);
             }
         }
+    }
 
-        if (allCorrect) {
-            showWinPopup();
+    if (allCorrect) {
+        console.log("PUZZLE SOLVED! All tiles correct.");
+        showWinPopup();
+    } else {
+        console.log("Puzzle not solved. Mismatches found (showing up to 5):");
+        mismatchesFound.forEach(mismatch => console.log(mismatch));
+        if (mismatchesFound.length === 0 && gridCells.length === correctGridSolutionOrder.length) {
+             // This case implies all cells might be filled, but something is still wrong.
+             // Or all cells are NOT filled. Let's check if all cells are filled.
+             let allCellsFilled = true;
+             for(let i=0; i<gridCells.length; i++){
+                 if(!gridCells[i].firstChild){
+                     allCellsFilled = false;
+                     console.log(`Cell ${i} is empty.`);
+                     break;
+                 }
+             }
+             if(allCellsFilled){
+                console.log("All cells appear filled, but a mismatch was detected earlier or some other logic error.");
+             } else {
+                console.log("Not all cells are filled.");
+             }
         }
     }
+}
 
     function showWinPopup() {
         winPopup.classList.add('visible');
